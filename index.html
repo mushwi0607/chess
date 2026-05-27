@@ -13,7 +13,7 @@
 
 <nav class="nav">
   <div class="logo" onclick="goPage('home')">
-    <div class="logo-icon"><img src="logo.jpg" alt="Logo" onerror="this.outerHTML='♟️'"></div>Yn Chess
+    <div class="logo-icon"><img src="logo.jpg" alt="Logo" onerror="this.outerHTML=''"></div>Yn Chess
   </div>
   <div class="nav-links">
     <button class="nav-btn act" onclick="goPage('home',this)">Trang chủ</button>
@@ -35,28 +35,30 @@
 <div id="pg-home" class="page act">
   <div class="hero">
     <div class="floats">
-      <img src="giphy (6).gif" alt="" class="fl" style="width:30px;height:30px">
-      <img src="giphy (2).gif" alt="" class="fl" style="width:30px;height:30px">
-      <img src="hellokitty.gif" alt="" class="fl" style="width:30px;height:30px">
-      <img src="giphy (1).gif" alt="" class="fl" style="width:32px;height:32px">
-      <img src="giphy (7).gif" alt="" class="fl" style="width:28px;height:28px">
+      <img src="giphy (6).gif" alt="" class="fl" style="width: 40px;height: 40px">
+      <img src="giphy (2).gif" alt="" class="fl" style="width: 40px;height: 40px">
+      <img src="hellokitty.gif" alt="" class="fl" style="width:40px;height:40px">
+      <img src="giphy (1).gif" alt="" class="fl" style="width:40px;height:40px">
+      <img src="kanna.gif" alt="" class="fl" style="width:40px;height:40px">
+      <img src="8.gif" alt="" class="fl" style="width:40px;height:40px">
+      <img src="giphy (7).gif" alt="" class="fl" style="width:40px;height:40px">
     </div>
     <div class="hero-badge">✨ Chess Cua Nhi</div>
     <h1>Chào mừng đến<br><span>Chess của Nhi</span> 🌸</h1>
     <p>Code cua Yn</p>
     <div class="hero-btns">
-      <button class="btn btn-p btn-lg" onclick="openMod('newgame')">Chơi ngay ♟</button>
-      <button class="btn btn-rank btn-lg" onclick="startRankGame()">⚔️ Chơi Rank</button>
-      <button class="btn btn-o btn-lg" onclick="goPage('rankings')">👑 Xếp hạng</button>
+      <button class="btn btn-p btn-lg" onclick="openMod('newgame')">Chơi ngay </button>
+      <button class="btn btn-rank btn-lg" onclick="startRankGame()"> Chơi Rank</button>
+      <button class="btn btn-o btn-lg" onclick="goPage('rankings')"> Xếp hạng</button>
     </div>
   </div>
 
   <!-- JOIN CODE BOX -->
   <div style="padding:18px 28px 0;max-width:500px;margin:0 auto">
     <div class="join-box">
-      <span class="join-label">🔑 Nhập mã ván:</span>
+      <span class="join-label"> Nhập mã ván:</span>
       <input id="join-code-input" maxlength="6" placeholder="ABC123" oninput="this.value=this.value.toUpperCase()">
-      <button class="btn btn-p btn-sm" onclick="joinByCode()">Vào ván ♟</button>
+      <button class="btn btn-p btn-sm" onclick="joinByCode()">Vào ván </button>
     </div>
   </div>
 
@@ -76,7 +78,7 @@
   </div>
 
   <div class="masc-section">
-    <h2>🎀 Chọn Avatar</h2>
+    <h2> Chọn Avatar</h2>
     <div class="masc-row" id="home-masc-p1"></div>
   </div>
 </div>
@@ -85,7 +87,7 @@
 <div id="pg-game" class="page">
   <div class="game-wrap">
     <div class="sidebar">
-      <div class="sb-title">♟️ Ván cờ</div>
+      <div class="sb-title"> Ván cờ</div>
       <div id="game-mode-badge" class="game-mode-label gml-n">Chế độ thường</div>
       <div class="pcard" id="pcard-black">
         <div class="pinfo">
@@ -97,7 +99,7 @@
       <div style="text-align:center;font-size:10px;color:var(--text3)">⚔️ vs ⚔️</div>
       <div class="pcard" id="pcard-white">
         <div class="pinfo">
-          <div class="pav" id="av-white"><span id="av-white-inner">🐱</span></div>
+          <div class="pav" id="av-white"><span id="av-white-inner"></span></div>
           <div><div class="pname" id="pname-white">Bạn</div><div class="prat" id="prat-white">★ 1200</div></div>
         </div>
         <div class="timer active-t" id="t-white">05:00</div>
@@ -108,15 +110,15 @@
       <div style="font-size:10px;color:var(--text3)">Trắng bắt:</div>
       <div class="cap-area" id="cap-w"></div>
       <div style="flex:1"></div>
-      <button class="sb-btn sb-btn-o" onclick="openMod('newgame')">🔄 Ván mới</button>
-      <button class="sb-btn sb-btn-g" onclick="flipBrd()">🔃 Lật bàn cờ</button>
-      <button class="sb-btn sb-btn-g" onclick="undoMv()">↩ Hoàn tác</button>
-      <button class="sb-btn sb-btn-o" onclick="openMod('resign')">🏳️ Thua / 🤝 Hòa</button>
+      <button class="sb-btn sb-btn-o" onclick="openMod('newgame')"> Ván mới</button>
+      <button class="sb-btn sb-btn-g" onclick="flipBrd()"> Lật bàn cờ</button>
+      <button class="sb-btn sb-btn-g" onclick="undoMv()"> Hoàn tác</button>
+      <button class="sb-btn sb-btn-o" onclick="openMod('resign')"> Thua /  Hòa</button>
     </div>
 
     <div class="game-center">
       <div class="status-bar" id="status-bar">Lượt: <strong>Trắng ⬜</strong> · Nước <strong>1</strong></div>
-      <div class="check-warn" id="check-warn">⚠️ VUA ĐANG BỊ CHIẾU! HÃY ĐỠ NGAY! ⚠️</div>
+      <div class="check-warn" id="check-warn"> VUA ĐANG BỊ CHIẾU! HÃY ĐỠ NGAY! </div>
       <div class="board-outer" id="board-outer">
         <div class="coord-row" id="coord-top"></div>
         <div class="board-body">
@@ -124,25 +126,25 @@
           <div class="board-grid" id="board-grid"></div>
         </div>
         <div class="promo-modal" id="promo-modal">
-          <div class="promo-title">🎀 Phong hậu!</div>
+          <div class="promo-title"> Phong hậu!</div>
           <div class="promo-opts" id="promo-opts"></div>
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-        <button class="btn btn-o btn-sm" onclick="undoMv()">↩ Hoàn tác</button>
-        <button class="btn btn-o btn-sm" onclick="openMod('resign')">🏳️ Thua</button>
-        <button class="btn btn-o btn-sm" onclick="offerDraw()">🤝 Hòa</button>
+        <button class="btn btn-o btn-sm" onclick="undoMv()"> Hoàn tác</button>
+        <button class="btn btn-o btn-sm" onclick="openMod('resign')"> Thua</button>
+        <button class="btn btn-o btn-sm" onclick="offerDraw()"> Hòa</button>
       </div>
     </div>
 
     <div class="right-panel">
-      <div class="sb-title">📋 Nước đi</div>
+      <div class="sb-title"> Nước đi</div>
       <div style="font-size:10px;color:var(--text3)">Đánh giá vị trí</div>
       <div class="eval-bar"><div class="eval-fill" id="eval-fill" style="width:50%"></div></div>
       <div class="move-list" id="move-list">
         <div style="text-align:center;color:var(--text3);font-size:11px;padding:14px 0">Chưa có nước đi</div>
       </div>
-      <div class="sb-title" style="margin-top:4px">💬 Chat ván</div>
+      <div class="sb-title" style="margin-top:4px"> Chat ván</div>
       <div class="chat-wrap">
         <div class="chat-msgs" id="chat-msgs"></div>
         <div class="chat-input-row">
@@ -157,7 +159,7 @@
 <!-- RESULTS -->
 <div id="pg-results" class="page">
   <div class="res-pg">
-    <div class="pg-title">🏆 Lịch sử trận đấu</div>
+    <div class="pg-title"> Lịch sử trận đấu</div>
     <p class="pg-sub">Tất cả các ván cờ đã chơi (click để xem lại)</p>
     <div class="res-list" id="res-list">
       <div class="empty-state">Chưa có trận đấu nào 🌸<br><small>Hãy chơi ván cờ đầu tiên!</small></div>
@@ -168,7 +170,7 @@
 <!-- RANKINGS -->
 <div id="pg-rankings" class="page">
   <div class="rank-pg">
-    <div class="pg-title">👑 Bảng xếp hạng ELO</div>
+    <div class="pg-title"> Bảng xếp hạng ELO</div>
     <p class="pg-sub">Top người chơi Chess Cua Nhi 🌸 — chỉ rank chính thức</p>
     <div class="rank-table">
       <div class="rank-head">
@@ -182,7 +184,7 @@
 <!-- FRIENDS -->
 <div id="pg-friends" class="page">
   <div class="friends-pg">
-    <div class="pg-title">👫 Bạn bè</div>
+    <div class="pg-title"> Bạn bè</div>
     <p class="pg-sub">Kết bạn, trò chuyện, xem trạng thái trực tuyến</p>
     <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
       <div style="display:flex;gap:6px;flex:1;max-width:320px">
@@ -228,7 +230,7 @@
       <div class="masc-row" id="profile-masc"></div>
     </div>
     <div class="prof-history">
-      <div class="ph-title">📜 Lịch sử đấu</div>
+      <div class="ph-title">Lịch sử đấu</div>
       <div class="ph-list" id="prof-history-list"></div>
     </div>
   </div>
@@ -236,7 +238,13 @@
 
 <!-- ===== MODALS ===== -->
 <div class="mbg" id="mod-login"><div class="modal">
-  <span class="mem">🐱</span><h2>Đăng nhập</h2><p>Chào mừng trở lại Chess ✨</p>
+  <img src="giphy (1).gif" style="width:100px;height:100px;margin:0 auto;display:block"><div class="floats">
+      <img src="giphy (6).gif" alt="" class="fl" style="width:30px;height:30px">
+      <img src="giphy (2).gif" alt="" class="fl" style="width:30px;height:30px">
+      <img src="hellokitty.gif" alt="" class="fl" style="width:30px;height:30px">
+      <img src="giphy (1).gif" alt="" class="fl" style="width:32px;height:32px">
+      <img src="giphy (7).gif" alt="" class="fl" style="width:28px;height:28px">
+    </div><h2>Đăng nhập</h2><p>Chào mừng trở lại Chess ✨</p>
   <div class="minput"><label>Tên người dùng</label><input id="li-user" type="text" placeholder="KittyQueen" onkeydown="if(event.key==='Enter')doLogin()"></div>
   <div class="minput"><label>Mật khẩu</label><input id="li-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
   <div id="li-err" style="color:var(--pk5);font-size:11px;margin-bottom:8px;display:none"></div>
@@ -247,7 +255,13 @@
 </div></div>
 
 <div class="mbg" id="mod-register"><div class="modal">
-  <span class="mem">🌸</span><h2>Đăng ký</h2><p>Gia nhập cộng đồng Chess Cua Nhi 💕</p>
+  <img src="giphy (2).gif" style="width:100px;height:100px;margin:0 auto;display:block"><div class="floats">
+      <img src="giphy (6).gif" alt="" class="fl" style="width:30px;height:30px">
+      <img src="giphy (2).gif" alt="" class="fl" style="width:30px;height:30px">
+      <img src="hellokitty.gif" alt="" class="fl" style="width:30px;height:30px">
+      <img src="giphy (1).gif" alt="" class="fl" style="width:32px;height:32px">
+      <img src="giphy (7).gif" alt="" class="fl" style="width:28px;height:28px">
+    </div><h2>Đăng ký</h2><p>Gia nhập cộng đồng Chess Cua Nhi 💕</p>
   <div class="minput"><label>Tên người dùng</label><input id="reg-user" type="text" placeholder="KittyChessQueen"></div>
   <div class="minput"><label>Mật khẩu</label><input id="reg-pass" type="password" placeholder="••••••••"></div>
   <div id="reg-err" style="color:var(--pk5);font-size:11px;margin-bottom:8px;display:none"></div>
@@ -267,14 +281,22 @@
     <button id="ng-rank" class="btn btn-o" style="flex:1;border-width:2px" onclick="selGameMode('rank',this)">⚔️ Rank<br><small style="font-size:10px;font-weight:400">+/− ELO ngẫu nhiên</small></button>
   </div>
   <div class="gopts">
-    <div class="gopt sel" id="gopt-ai" onclick="selOpt(this,'ai')"><div class="oi">🤖</div><div><h4>Chơi với AI Sanrio</h4><p>Bot thông minh — chọn độ khó</p></div></div>
-    <div class="gopt" id="gopt-2p" onclick="selOpt(this,'2p')"><div class="oi">👥</div><div><h4>2 Người cùng máy</h4><p>Luân phiên trên cùng màn hình</p></div></div>
-    <div class="gopt" id="gopt-room" onclick="selOpt(this,'room')"><div class="oi">🔑</div><div><h4>Tạo ván có mã</h4><p>Chia sẻ mã — bạn vào cùng chơi</p></div></div>
+    <div class="gopt sel" id="gopt-ai" onclick="selOpt(this,'ai')">
+        <img src="giphy (1).gif" alt="" class="fl" style="width:32px;height:32px"><div>
+            <h4>Chơi với AI</h4>
+            <p></p></div></div>
+    <div class="gopt" id="gopt-2p" onclick="selOpt(this,'2p')">
+        <img src="giphy (6).gif" alt="" class="fl" style="width:30px;height:30px">
+        <div><h4>2 Người</h4><p></p></div></div>
+    <div class="gopt" id="gopt-room" onclick="selOpt(this,'room')">
+        <img src="giphy (7).gif" alt="" class="fl" style="width:28px;height:28px"><div>
+            
+            <h4>Tạo ván có mã</h4><p></p></div></div>
   </div>
   <div id="diff-row" class="diff-row" style="display:flex">
-    <button class="diff-btn" id="d-easy" onclick="selDiff(this,'easy')">🌸 Dễ</button>
-    <button class="diff-btn sel" id="d-medium" onclick="selDiff(this,'medium')">⚡ Vừa</button>
-    <button class="diff-btn" id="d-hard" onclick="selDiff(this,'hard')">💀 Khó</button>
+    <button class="diff-btn" id="d-easy" onclick="selDiff(this,'easy')"> Dễ</button>
+    <button class="diff-btn sel" id="d-medium" onclick="selDiff(this,'medium')"> Vừa</button>
+    <button class="diff-btn" id="d-hard" onclick="selDiff(this,'hard')"> Khó</button>
   </div>
   <div id="color-pick-wrap" style="margin-bottom:10px">
     <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px">Bạn chơi quân:</div>
@@ -288,23 +310,23 @@
     <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px">Linh vật Player 2:</div>
     <div class="modal-masc-row" id="p2-masc-row"></div>
   </div>
-  <div class="twop-note" id="twop-note">👥 Hai người luân phiên. Không tự động lật bàn!</div>
+  <div class="twop-note" id="twop-note"> </div>
   <div class="tc-row">
-    <button class="tc-btn" id="tc1" onclick="selTC(this)">⚡ 1p</button>
-    <button class="tc-btn" id="tc3" onclick="selTC(this)">🔥 3p</button>
-    <button class="tc-btn sel" id="tc5" onclick="selTC(this)">⏰ 5p</button>
-    <button class="tc-btn" id="tc10" onclick="selTC(this)">🕐 10p</button>
-    <button class="tc-btn" id="tc30" onclick="selTC(this)">🌸 30p</button>
-    <button class="tc-btn" id="tc60" onclick="selTC(this)">⌛ 1g</button>
+    <button class="tc-btn" id="tc1" onclick="selTC(this)"> 1 phút</button>
+    <button class="tc-btn" id="tc3" onclick="selTC(this)"> 3 phút</button>
+    <button class="tc-btn sel" id="tc5" onclick="selTC(this)"> 5 phút</button>
+    <button class="tc-btn" id="tc10" onclick="selTC(this)"> 10 phút</button>
+    <button class="tc-btn" id="tc30" onclick="selTC(this)"> 30 phút</button>
+    <button class="tc-btn" id="tc60" onclick="selTC(this)"> 1 giờ</button>
   </div>
   <div class="macts">
-    <button class="btn btn-p btn-lg" onclick="startGame()">🌸 Bắt đầu!</button>
+    <button class="btn btn-p btn-lg" onclick="startGame()"> Bắt đầu</button>
     <button class="btn btn-o btn-lg" onclick="closeMod('newgame')">Hủy</button>
   </div>
 </div></div>
 
 <div class="mbg" id="mod-resign"><div class="modal">
-  <span class="mem">🏳️</span><h2>Xác nhận thua cuộc?</h2><p>Đừng bỏ cuộc sớm nhé! 💪</p>
+  <span class="mem"></span><h2>Xác nhận thua cuộc?</h2><p>Đừng bỏ cuộc sớm nhé! </p>
   <div class="macts">
     <button class="btn btn-p" onclick="resignGame()">Xác nhận thua</button>
     <button class="btn btn-o" onclick="closeMod('resign')">Tiếp tục chơi!</button>
@@ -312,25 +334,25 @@
 </div></div>
 
 <div class="mbg" id="mod-winner"><div class="modal">
-  <span class="mem" id="w-em">🎉</span>
+  <span class="mem" id="w-em"></span>
   <h2 id="w-title">Bạn đã thắng!</h2>
-  <p id="w-msg">Tuyệt vời! 🌸</p>
+  <p id="w-msg"></p>
   <div class="elo-change" id="elo-change-txt"></div>
   <div class="macts">
-    <button class="btn btn-p" onclick="closeMod('winner');openMod('newgame')">Ván mới 🎮</button>
-    <button class="btn btn-o" onclick="closeMod('winner');goPage('results')">Xem kết quả 🏆</button>
+    <button class="btn btn-p" onclick="closeMod('winner');openMod('newgame')">Ván mới </button>
+    <button class="btn btn-o" onclick="closeMod('winner');goPage('results')">Xem kết quả </button>
   </div>
 </div></div>
 
 <!-- Room code modal -->
 <div class="mbg" id="mod-room"><div class="modal">
-  <span class="mem">🔑</span>
+  <span class="mem"></span>
   <h2>Mã ván cờ</h2>
   <p>Chia sẻ mã này cho bạn. Mã hết hiệu lực sau <b>5 phút</b> nếu không ai tham gia.</p>
   <div class="room-code-box">
     <div style="font-size:12px;color:rgba(255,255,255,.8)">Mã ván của bạn:</div>
     <div class="room-code-val" id="room-code-val">------</div>
-    <div class="room-code-timer" id="room-code-timer">⏳ Còn 5:00</div>
+    <div class="room-code-timer" id="room-code-timer"> Còn 5:00</div>
   </div>
   <button class="btn btn-o" style="margin-bottom:8px;width:100%" onclick="copyRoomCode()">📋 Sao chép mã</button>
   <button class="btn btn-o" onclick="closeMod('room');cancelRoom()">Hủy ván</button>
@@ -338,7 +360,7 @@
 
 <!-- Replay modal -->
 <div class="mbg" id="mod-replay"><div class="modal" style="max-width:520px">
-  <span class="mem" id="rp-em">📜</span>
+  <span class="mem" id="rp-em"></span>
   <h2 id="rp-title">Xem lại ván cờ</h2>
   <p id="rp-info" style="margin-bottom:10px"></p>
   <div id="rp-board" style="display:flex;justify-content:center;margin-bottom:10px"></div>
