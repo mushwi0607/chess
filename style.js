@@ -1,4 +1,3 @@
-
 // ════════════════════════════════════════
 // CONSTANTS & DATA
 // ════════════════════════════════════════
@@ -42,10 +41,133 @@ const MASCOTS=[
 
 const LS_USERS='kc_users2',LS_CUR='kc_cur2',LS_MATCHES='kc_matches2',LS_ROOMS='kc_rooms2',LS_CHATS='kc_chats2',LS_ONLINE='kc_online2';
 
-function getUsers(){try{return JSON.parse(localStorage.getItem(LS_USERS))||{};}catch{return{};}}
-function saveUsers(u){localStorage.setItem(LS_USERS,JSON.stringify(u));}
+// ════════════════════════════════════════
+// CLOUD STORAGE — Firebase Realtime DB (dữ liệu vĩnh viễn, đồng bộ mọi thiết bị)
+// ════════════════════════════════════════
+// 👉 Thay URL này bằng Firebase project của bạn (miễn phí tại firebase.google.com)
+const FIREBASE_URL='https://yn-chess-default-rtdb.firebaseio.com';
+
+let _cloudUsers=null; // cache trong bộ nhớ
+let _saveUsersTimer=null;
+let _saveMatchesTimer=null;
+
+function showSyncStatus(msg){
+  let el=document.getElementById('sync-status');
+  if(!el){
+    el=document.createElement('div');el.id='sync-status';
+    el.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#e91e8c,#9c27b0);color:#fff;padding:7px 20px;border-radius:20px;font-size:12px;font-weight:700;z-index:9999;pointer-events:none;transition:opacity .4s;box-shadow:0 4px 15px rgba(233,30,140,.4)';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;el.style.opacity='1';
+  clearTimeout(el._to);
+  if(msg.includes('✅')||msg.includes('💾'))el._to=setTimeout(()=>{el.style.opacity='0';},2000);
+}
+
+// Đọc toàn bộ users từ Firebase
+async function cloudReadUsers(){
+  try{
+    const r=await fetch(`${FIREBASE_URL}/users.json`);
+    if(!r.ok)return null;
+    return await r.json()||{};
+  }catch{return null;}
+}
+
+// Ghi toàn bộ users lên Firebase (debounce)
+async function cloudWriteUsers(users){
+  try{
+    await fetch(`${FIREBASE_URL}/users.json`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(users)
+    });
+    return true;
+  }catch{return false;}
+}
+
+// Đọc matches
+async function cloudReadMatches(){
+  try{
+    const r=await fetch(`${FIREBASE_URL}/matches.json`);
+    if(!r.ok)return null;
+    return await r.json()||[];
+  }catch{return null;}
+}
+
+// Ghi matches
+async function cloudWriteMatches(matches){
+  try{
+    await fetch(`${FIREBASE_URL}/matches.json`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(matches)
+    });
+  }catch{}
+}
+
+// Ghi log tài khoản mới — chỉ dùng nội bộ, người dùng không thấy
+async function cloudLogNewAccount(userObj){
+  try{
+    // Lưu vào node /account_log/{tên} — admin đọc tại trang admin.html
+    await fetch(`${FIREBASE_URL}/account_log/${encodeURIComponent(userObj.name)}.json`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        name:userObj.name,
+        phone:userObj.phone,
+        elo:userObj.elo,
+        mascId:userObj.mascId,
+        regDate:userObj.regDate
+      })
+    });
+  }catch{}
+}
+
+// Khởi tạo: tải users từ cloud, merge với local
+async function initCloud(){
+  showSyncStatus('🔄 Đang tải dữ liệu...');
+  const cloudData=await cloudReadUsers();
+  if(cloudData){
+    // Merge: cloud là chủ đạo, local bổ sung nếu cloud chưa có
+    const local=getLocalUsers();
+    const merged={...local,...cloudData};
+    localStorage.setItem(LS_USERS,JSON.stringify(merged));
+    _cloudUsers=merged;
+    showSyncStatus('✅ Đồng bộ xong!');
+  } else {
+    // Không kết nối được cloud → dùng local, đẩy lên cloud
+    _cloudUsers=getLocalUsers();
+    if(Object.keys(_cloudUsers).length>0)cloudWriteUsers(_cloudUsers);
+    showSyncStatus('⚠️ Dùng dữ liệu local (không có mạng)');
+  }
+  // Tải matches
+  const cloudMatches=await cloudReadMatches();
+  if(cloudMatches&&Array.isArray(cloudMatches)){
+    localStorage.setItem(LS_MATCHES,JSON.stringify(cloudMatches));
+  }
+  refreshRankings();refreshProfile();refreshFriends();updateAuthUI();
+}
+
+// ── Các hàm get/save dùng trong toàn bộ code ──
+function getLocalUsers(){try{return JSON.parse(localStorage.getItem(LS_USERS))||{};}catch{return{};}}
+function getLocalMatches(){try{return JSON.parse(localStorage.getItem(LS_MATCHES))||[];}catch{return[];}}
+
+function getUsers(){return _cloudUsers||getLocalUsers();}
+function saveUsers(u){
+  _cloudUsers=u;
+  localStorage.setItem(LS_USERS,JSON.stringify(u));
+  clearTimeout(_saveUsersTimer);
+  _saveUsersTimer=setTimeout(async()=>{
+    showSyncStatus('💾 Đang lưu...');
+    const ok=await cloudWriteUsers(u);
+    showSyncStatus(ok?'✅ Đã lưu!':'⚠️ Lưu cloud thất bại');
+  },1200);
+}
 function getMatches(){try{return JSON.parse(localStorage.getItem(LS_MATCHES))||[];}catch{return[];}}
-function saveMatches(m){localStorage.setItem(LS_MATCHES,JSON.stringify(m));}
+function saveMatches(m){
+  localStorage.setItem(LS_MATCHES,JSON.stringify(m));
+  clearTimeout(_saveMatchesTimer);
+  _saveMatchesTimer=setTimeout(()=>cloudWriteMatches(m),2000);
+}
 function getCurUser(){try{return JSON.parse(localStorage.getItem(LS_CUR))||null;}catch{return null;}}
 function saveCurUser(u){localStorage.setItem(LS_CUR,JSON.stringify(u));}
 function getRooms(){try{return JSON.parse(localStorage.getItem(LS_ROOMS))||{};}catch{return{};}}
@@ -93,16 +215,32 @@ function doLogin(){
 function doRegister(){
   const u=document.getElementById('reg-user').value.trim();
   const p=document.getElementById('reg-pass').value;
+  const phone=document.getElementById('reg-phone').value.trim();
   const err=document.getElementById('reg-err');
+
+  // Validate tên
   if(!u||u.length<3){err.textContent='Tên ít nhất 3 ký tự!';err.style.display='block';return;}
+  // Validate mật khẩu
   if(!p||p.length<4){err.textContent='Mật khẩu ít nhất 4 ký tự!';err.style.display='block';return;}
+  // Validate SĐT
+  if(!phone){err.textContent='Vui lòng nhập số điện thoại! 📱';err.style.display='block';return;}
+  if(!/^(0[3|5|7|8|9])[0-9]{8}$/.test(phone)){
+    err.textContent='SĐT không hợp lệ! (VD: 0912345678)';err.style.display='block';return;
+  }
   const users=getUsers();
+  // Kiểm tra tên trùng
   if(users[u]){err.textContent='Tên đã được dùng!';err.style.display='block';return;}
+  // Kiểm tra SĐT trùng
+  const phoneUsed=Object.values(users).some(acc=>acc.phone===phone);
+  if(phoneUsed){err.textContent='Số điện thoại này đã được đăng ký! 📵';err.style.display='block';return;}
+
   err.style.display='none';
   const sel=document.querySelector('#reg-masc-row .mmasc.sel');
   const mascId=sel?sel.dataset.id:'kitty';
-  users[u]={name:u,pass:p,elo:1200,mascId,wins:0,losses:0,draws:0,games:0,rankWins:0,rankLosses:0,rankGames:0,friends:[],friendReqs:[],sentReqs:[]};
+  users[u]={name:u,pass:p,phone,elo:1200,mascId,wins:0,losses:0,draws:0,games:0,rankWins:0,rankLosses:0,rankGames:0,friends:[],friendReqs:[],sentReqs:[],regDate:new Date().toLocaleString('vi-VN')};
   saveUsers(users);
+  // Ghi log tài khoản mới lên Firebase (chỉ admin thấy)
+  cloudLogNewAccount(users[u]);
   curUser=users[u];saveCurUser(curUser);pingOnline();
   closeMod('register');updateAuthUI();
   toast('Đăng ký thành công! 🌸 Chào '+u+'!');
@@ -787,8 +925,12 @@ function endGame(winner,reason){
   const dur=formatDur(history.length);
   const opponent=gameMode==='ai'?'AI Sanrio':'Người chơi 2';
   let outcome='draw';
-  if(winner==='white')outcome=(humanColor==='w'||gameMode==='2p')?'win':'loss';
-  else if(winner==='black')outcome=(humanColor==='b')?'win':'loss';
+  if(gameMode==='2p'){
+    outcome=winner?'win':'draw';
+  } else {
+    if(winner==='white')outcome=(humanColor==='w')?'win':'loss';
+    else if(winner==='black')outcome=(humanColor==='b')?'win':'loss';
+  }
 
   let eloChange=0;
   if(curUser&&isRankMode){
@@ -1052,20 +1194,37 @@ function startGame(){
 
   // Avatars
   p1MascId=curUser?curUser.mascId:'kitty';
-  setAvatarEl('av-white-inner',p1MascId);
-  document.getElementById('pname-white').textContent=curUser?curUser.name:'Người chơi 1';
-  document.getElementById('prat-white').textContent='★ '+(curUser?curUser.elo:1200);
 
   if(gameMode==='2p'){
+    // 2P: người chơi 1 luôn là Trắng, người chơi 2 là Đen
+    setAvatarEl('av-white-inner',p1MascId);
+    document.getElementById('pname-white').textContent=curUser?curUser.name:'Người chơi 1';
+    document.getElementById('prat-white').textContent='★ '+(curUser?curUser.elo:1200);
     const p2sel=document.querySelector('#p2-masc-row .mmasc.sel');
     p2MascId=p2sel?p2sel.dataset.id:'kuromi';
     setAvatarEl('av-black-inner',p2MascId);
     document.getElementById('pname-black').textContent='Người chơi 2';
     document.getElementById('prat-black').textContent='★ 1200';
   } else {
-    document.getElementById('av-black-inner').textContent='🖤';
-    document.getElementById('pname-black').textContent='Kuromi AI';
-    document.getElementById('prat-black').textContent='★ '+(difficulty==='easy'?'900':difficulty==='hard'?'1800':'1450');
+    // AI mode: đặt avatar đúng theo màu người chọn
+    const aiRat='★ '+(difficulty==='easy'?'900':difficulty==='hard'?'1800':'1450');
+    if(humanColor==='w'){
+      // Người=Trắng, AI=Đen
+      setAvatarEl('av-white-inner',p1MascId);
+      document.getElementById('pname-white').textContent=curUser?curUser.name:'Bạn';
+      document.getElementById('prat-white').textContent='★ '+(curUser?curUser.elo:1200);
+      document.getElementById('av-black-inner').textContent='🖤';
+      document.getElementById('pname-black').textContent='Kuromi AI';
+      document.getElementById('prat-black').textContent=aiRat;
+    } else {
+      // Người=Đen, AI=Trắng
+      document.getElementById('av-white-inner').textContent='🖤';
+      document.getElementById('pname-white').textContent='Kuromi AI';
+      document.getElementById('prat-white').textContent=aiRat;
+      setAvatarEl('av-black-inner',p1MascId);
+      document.getElementById('pname-black').textContent=curUser?curUser.name:'Bạn';
+      document.getElementById('prat-black').textContent='★ '+(curUser?curUser.elo:1200);
+    }
   }
 
   // Mode badge
@@ -1388,3 +1547,169 @@ init();
 
 // Refresh online status periodically
 setInterval(refreshOnlineStatus,30000);
+
+// Khởi động cloud sync sau khi DOM sẵn sàng
+window.addEventListener('load',()=>initCloud());
+// Tìm đoạn xử lý đăng ký tài khoản trong file style.js của bạn và cập nhật / bổ sung cấu trúc này:
+function registerUser(username, password, phone) {
+  let users = JSON.parse(localStorage.getItem('kc_users2')) || {};
+  
+  if (users[username]) {
+    alert("Tài khoản đã tồn tại!");
+    return false;
+  }
+  
+  // Lấy thời gian hiện tại để sếp theo dõi khách hàng đăng ký lúc nào
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('vi-VN') + ' ' + now.toLocaleDateString('vi-VN');
+
+  // Lưu trữ đầy đủ bộ dữ liệu theo yêu cầu của cấp trên
+  users[username] = {
+    password: password,         // Ghi nhớ mật khẩu
+    phone: phone || '(chưa có)', // Ghi nhớ số điện thoại
+    elo: 1200,                  // ELO mặc định ban đầu
+    wins: 0, losses: 0, draws: 0, games: 0,
+    regDate: timeStr,            // Lưu ngày giờ đăng ký
+    mascId: 'kitty'             // Mascot mặc định dễ thương
+  };
+  
+  localStorage.setItem('kc_users2', JSON.stringify(users));
+  return true;
+}
+
+// 1. Khởi tạo cấu hình các Bot AI
+const AI_BOTS = {
+    easy: {
+        name: "Melody AI 🎵",
+        avatar: "giphy (6).gif",
+        depth: 1,
+        randomChance: 0.4 // 40% đi ngẫu nhiên tấu hài, 60% đi nước tốt nhất depth 1
+    },
+    medium: {
+        name: "Sakura AI 🌸",
+        avatar: "sakura.gif",
+        depth: 2,
+        randomChance: 0.1 // Chỉ 10% đi ngẫu nhiên
+    },
+    hard: {
+        name: "Kuro AI 🐈‍⬛",
+        avatar: "kuro-dark.gif",
+        depth: 3, // Tính toán sâu 3 nước đi công thủ toàn diện
+        randomChance: 0.0
+    }
+};
+// 4. Thuật toán Minimax kết hợp cắt tỉa Alpha-Beta Pruning giúp AI "Khó" chạy mượt
+function minimax(game, depth, alpha, beta, isMaximizingPlayer) {
+    if (depth === 0 || game.game_over()) {
+        return evaluateBoard(game.board());
+    }
+
+    let moves = game.moves();
+    if (isMaximizingPlayer) {
+        let maxEval = -Infinity;
+        for (let move of moves) {
+            game.move(move);
+            let evaluation = minimax(game, depth - 1, alpha, beta, false);
+            game.undo();
+            maxEval = Math.max(maxEval, evaluation);
+            alpha = Math.max(alpha, evaluation);
+            if (beta <= alpha) break; // Cắt tỉa nhánh thừa
+        }
+        return maxEval;
+    } else {
+        let minEval = Infinity;
+        for (let move of moves) {
+            game.move(move);
+            let evaluation = minimax(game, depth - 1, alpha, beta, true);
+            game.undo();
+            minEval = Math.min(minEval, evaluation);
+            beta = Math.min(beta, evaluation);
+            if (beta <= alpha) break; // Cắt tỉa nhánh thừa
+        }
+        return minEval;
+    }
+}
+
+// 5. Hàm kích hoạt nước đi của AI khi tới lượt
+function makeAIMove(chessGameInstance, chessBoardInstance) {
+    if (chessGameInstance.game_over()) return;
+
+    const currentBot = AI_BOTS[currentBotKey];
+    let moves = chessGameInstance.moves();
+    let selectedMove = null;
+
+    // Xử lý yếu tố "Tấu hài / Ngẫu nhiên" dựa trên cấp độ Bot
+    if (Math.random() < currentBot.randomChance) {
+        selectedMove = moves[Math.floor(Math.random() * moves.length)];
+    } else {
+        // Tìm nước đi tối ưu nhất bằng Minimax
+        let bestMove = null;
+        let bestValue = -Infinity;
+        
+        // Trộn mảng nước đi để tạo sự đa dạng, tránh việc Bot đi lập đi lặp lại một khai cuộc
+        moves.sort(() => 0.5 - Math.random()); 
+
+        for (let move of moves) {
+            chessGameInstance.move(move);
+            let boardValue = minimax(chessGameInstance, currentBot.depth - 1, -Infinity, Infinity, false);
+            chessGameInstance.undo();
+
+            if (boardValue > bestValue) {
+                bestValue = boardValue;
+                bestMove = move;
+            }
+        }
+        selectedMove = bestMove || moves[0];
+    }
+
+    // Thực hiện nước đi lên bàn cờ hệ thống và cập nhật giao diện đồ họa
+    chessGameInstance.move(selectedMove);
+    chessBoardInstance.position(chessGameInstance.fen());
+    
+    // Kiểm tra trạng thái kết thúc trận đấu để thông báo dễ thương
+    if (chessGameInstance.in_checkmate()) {
+        alert(`👑 ${currentBot.name} đã hạ gục bạn rồi! Đừng buồn, làm ván nữa nhé Sếp! 🎀`);
+    }
+}
+
+
+let currentBotKey = 'easy'; // Mặc định ban đầu là Melody AI
+
+// 2. Hàm xử lý khi Sếp hoặc người chơi click chọn Bot trên giao diện
+function selectBot(botKey) {
+    currentBotKey = botKey;
+    
+    // Reset hiệu ứng border của các card
+    document.querySelectorAll('.bot-card').forEach(card => {
+        card.style.border = "2px solid transparent";
+        card.style.background = "#f9f9f9";
+    });
+    
+    // Kích hoạt card được chọn
+    const activeCard = document.getElementById(`card-${botKey}`);
+    if(activeCard) {
+        activeCard.style.border = "2px solid var(--pk5)";
+        activeCard.style.background = "var(--pk1)";
+    }
+    
+    console.log(`Đã đổi đối thủ sang: ${AI_BOTS[botKey].name}`);
+}
+
+// 3. Hàm đánh giá giá trị bàn cờ đơn giản (Bảng điểm quân cờ tiêu chuẩn)
+const PIECE_VALUES = { p: 10, r: 50, n: 30, b: 30, q: 90, k: 9000 };
+
+function evaluateBoard(board) {
+    let totalEvaluation = 0;
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            let piece = board[r][c];
+            if (piece) {
+                // Giả định AI cầm quân Đen (b), Người chơi cầm quân Trắng (w)
+                let value = PIECE_VALUES[piece.type];
+                totalEvaluation += (piece.color === 'b') ? value : -value;
+            }
+        }
+    }
+    return totalEvaluation;
+}
+
