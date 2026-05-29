@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Trị — Yn Chess 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: var(--pk1);
+            font-family: 'Quicksand', sans-serif;
+            color: var(--text);
+            padding: 20px;
+        }
+        .admin-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--r2);
+            border: 3px solid var(--pk2);
+            box-shadow: 0 8px 24px var(--sh);
+            position: relative;
+        }
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .admin-title {
+            color: var(--pk5);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 900;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        .admin-subtitle {
+            font-size: 14px;
+            color: var(--text3);
+        }
+        /* Bảng danh sách tài khoản phong cách dễ thương */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: var(--r);
+            overflow: hidden;
+            border: 2px solid var(--pk2);
+        }
+        .admin-table th {
+            background-color: var(--pk2);
+            color: var(--text);
+            font-weight: 700;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .admin-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--pk1);
+            background-color: var(--white);
+            font-size: 14px;
+        }
+        .admin-table tr:hover td {
+            background-color: var(--pk1);
+        }
+        /* Nút chức năng */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: flex-end;
+        }
+        .btn-admin {
+            background: var(--pk5);
+            color: var(--white);
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--r);
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        .btn-back {
+            background: var(--text2);
+        }
+        /* Màn hình khóa bảo mật */
+        #lock-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--pk1);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .lock-box {
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--r2);
+            border: 2px solid var(--pk3);
+            text-align: center;
+            box-shadow: 0 4px 15px var(--sh);
+        }
+        .lock-input {
+            width: 80%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 2px solid var(--pk2);
+            border-radius: var(--r);
+            text-align: center;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="lock-screen">
+    <div class="lock-box">
+        <h3 style="color: var(--pk5); margin-bottom: 10px;">🌸  Quản Trị Viên </h3>
+        <p style="font-size: 13px; color: var(--text2)">Vui lòng nhập mật khẩu xác minh Admin</p>
+        <input type="password" id="admin-pass-input" class="lock-input" placeholder="Mật khẩu của bạn...">
+        <br>
+        <button class="btn-admin" onclick="verifyAdmin()">Xác nhận</button>
+        <button class="btn-admin btn-back" style="margin-left:5px;" onclick="window.location.href='index.html'">Quay lại</button>
+    </div>
+</div>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <div class="admin-title">Yn Chess Admin </div>
+        <div class="admin-subtitle">danh sách bảo mật tài khoản người dùng hệ thống.</div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-admin" onclick="exportToPython()">Xuất Dữ Liệu Cho Tool Python</button>
+        <button class="btn-admin btn-back" onclick="window.location.href='index.html'"> Về Trang Chủ</button>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên Tài Khoản</th>
+                <th>Mật Khẩu (Bảo mật)</th>
+                <th>Số Điện Thoại</th>
+                <th>Hệ số ELO</th>
+                <th>Ngày Đăng Ký</th>
+            </tr>
+        </thead>
+        <tbody id="user-list-tbody">
+            </tbody>
+    </table>
+</div>
+
+<div id="petals-container"></div>
+
+<script src="style.js"></script>
+<script>
+    // Kiểm tra mật khẩu admin đơn giản trước khi xem (Mặc định đặt là: 123456)
+    function verifyAdmin() {
+        const pass = document.getElementById('admin-pass-input').value;
+        if(pass === "123456") { 
+            document.getElementById('lock-screen').style.display = 'none';
+            loadUsersToAdmin();
+        } else {
+            alert("❌ Sai mật khẩu ");
+        }
+    }
+
+    // Đọc dữ liệu từ index.html (localStorage) truyền sang bảng admin
+    function loadUsersToAdmin() {
+        const usersData = localStorage.getItem('kc_users2');
+        const tbody = document.getElementById('user-list-tbody');
+        tbody.innerHTML = '';
+
+        if (!usersData) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text3);">Chưa có tài khoản khách hàng nào đăng ký.</td></tr>`;
+            return;
+        }
+
+        const users = JSON.parse(usersData);
+        let index = 1;
+
+        for (let name in users) {
+            let u = users[name];
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td><b>${String(index++).padStart(3, '0')}</b></td>
+                <td style="color: var(--pk5); font-weight:700;">${name}</td>
+                <td><code>${u.password || '******'}</code></td>
+                <td>${u.phone || '<i>(Chưa có)</i>'}</td>
+                <td>⭐ ${u.elo || 1200}</td>
+                <td>${u.regDate || 'Không rõ'}</td>
+            `;
+            tbody.appendChild(row);
+        }
+    }
+
+    // Hàm tạo file JSON để nạp vào file Python `style.py` xuất ra file txt
+    function exportToPython() {
+        const data = localStorage.getItem('kc_users2') || '{}';
+        const blob = new Blob([data], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'users_data.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        alert(" Đã tải file 'users_data.json' về! Sếp có thể chạy file Python để xuất báo cáo chi tiết.");
+    }
+</script>
+</body>
+</html>
