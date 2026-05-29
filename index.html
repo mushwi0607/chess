@@ -8,6 +8,8 @@
 
 <!-- ✅ Liên kết file CSS riêng -->
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.py">
+<link rel="stylesheet" href="admin.html">
 </head>
 <body>
 
@@ -85,57 +87,36 @@
 
 <!-- GAME PAGE -->
 <div id="pg-game" class="page">
-  <div class="game-wrap">
-    <div class="sidebar">
-      <div class="sb-title"> Ván cờ</div>
-      <div id="game-mode-badge" class="game-mode-label gml-n">Chế độ thường</div>
-      <div class="pcard" id="pcard-black">
-        <div class="pinfo">
-          <div class="pav" id="av-black"><span id="av-black-inner">🖤</span></div>
-          <div><div class="pname" id="pname-black">Kuromi AI</div><div class="prat" id="prat-black">★ 1450</div></div>
-        </div>
-        <div class="timer" id="t-black">05:00</div>
+
+  <div class="game-wrap" style="display: flex; gap: 20px; max-width: 1100px; margin: 20px auto; padding: 0 15px; align-items: flex-start;">
+    
+    <div style="flex: 1.2; max-width: 550px; display: flex; flex-direction: column; gap: 10px;">
+      <div class="sidebar" style="width: 100%; padding: 10px; margin-bottom: 0;">
+        <div class="sb-title" id="playing-bot-name">Trận đấu Cờ Vua 🌸</div>
+        <div id="game-mode-badge" class="game-mode-label gml-n">Chế độ Bot AI</div>
       </div>
-      <div style="text-align:center;font-size:10px;color:var(--text3)">⚔️ vs ⚔️</div>
-      <div class="pcard" id="pcard-white">
-        <div class="pinfo">
-          <div class="pav" id="av-white"><span id="av-white-inner"></span></div>
-          <div><div class="pname" id="pname-white">Bạn</div><div class="prat" id="prat-white">★ 1200</div></div>
-        </div>
-        <div class="timer active-t" id="t-white">05:00</div>
-      </div>
-      <div class="sb-title">Quân bị bắt</div>
-      <div style="font-size:10px;color:var(--text3)">Đen bắt:</div>
-      <div class="cap-area" id="cap-b"></div>
-      <div style="font-size:10px;color:var(--text3)">Trắng bắt:</div>
-      <div class="cap-area" id="cap-w"></div>
-      <div style="flex:1"></div>
-      <button class="sb-btn sb-btn-o" onclick="openMod('newgame')"> Ván mới</button>
-      <button class="sb-btn sb-btn-g" onclick="flipBrd()"> Lật bàn cờ</button>
-      <button class="sb-btn sb-btn-g" onclick="undoMv()"> Hoàn tác</button>
-      <button class="sb-btn sb-btn-o" onclick="openMod('resign')"> Thua /  Hòa</button>
+      
+      <div id="my-board" style="width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"></div>
     </div>
 
-    <div class="game-center">
-      <div class="status-bar" id="status-bar">Lượt: <strong>Trắng ⬜</strong> · Nước <strong>1</strong></div>
-      <div class="check-warn" id="check-warn"> VUA ĐANG BỊ CHIẾU! HÃY ĐỠ NGAY! </div>
-      <div class="board-outer" id="board-outer">
-        <div class="coord-row" id="coord-top"></div>
-        <div class="board-body">
-          <div class="coord-col" id="coord-left"></div>
-          <div class="board-grid" id="board-grid"></div>
-        </div>
-        <div class="promo-modal" id="promo-modal">
-          <div class="promo-title"> Phong hậu!</div>
-          <div class="promo-opts" id="promo-opts"></div>
-        </div>
+    <div style="flex: 0.8; min-width: 300px; display: flex; flex-direction: column; background: var(--white); border: 2px solid var(--pk2); border-radius: var(--r2); padding: 15px; height: 580px; box-shadow: 0 4px 12px var(--sh);">
+      <div style="text-align: center; border-bottom: 2px solid var(--pk1); padding-bottom: 10px; margin-bottom: 10px;">
+        <h4 style="color: var(--pk5); font-family: 'Quicksand'; font-size: 16px;">💬 Chat trực tuyến với Bot</h4>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-        <button class="btn btn-o btn-sm" onclick="undoMv()"> Hoàn tác</button>
-        <button class="btn btn-o btn-sm" onclick="openMod('resign')"> Thua</button>
-        <button class="btn btn-o btn-sm" onclick="offerDraw()"> Hòa</button>
+      
+      <div id="game-chat-msgs" style="flex: 1; overflow-y: auto; background: var(--pk1); padding: 12px; border-radius: var(--r); margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="color: var(--text3); font-size: 12px; text-align: center;">Trận đấu bắt đầu! Hãy gửi lời nhắn đến Bot nhé 💕</div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="game-chat-input" placeholder="Nhập tin nhắn với Bot..." style="flex: 1; padding: 11px 15px; border: 2px solid var(--pk2); border-radius: var(--r); outline: none; font-family: inherit;" onkeydown="if(event.key==='Enter')sendGameChat()">
+        <button onclick="sendGameChat()" style="background: var(--pk5); color: white; border: none; padding: 0 20px; border-radius: var(--r); cursor: pointer; font-weight: bold; font-family: 'Quicksand'; transition: all 0.2s;">Gửi</button>
       </div>
     </div>
+
+  </div>
+</div>
+
 
     <div class="right-panel">
       <div class="sb-title"> Nước đi</div>
@@ -264,6 +245,10 @@
     </div><h2>Đăng ký</h2><p>Gia nhập cộng đồng Chess Cua Nhi 💕</p>
   <div class="minput"><label>Tên người dùng</label><input id="reg-user" type="text" placeholder="KittyChessQueen"></div>
   <div class="minput"><label>Mật khẩu</label><input id="reg-pass" type="password" placeholder="••••••••"></div>
+  <div class="minput">
+    <label>Số điện thoại 📱 <span style="font-size:10px;color:var(--text3);font-weight:400">(mỗi SĐT chỉ đăng ký 1 lần)</span></label>
+    <input id="reg-phone" type="tel" placeholder="0912345678" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+  </div>
   <div id="reg-err" style="color:var(--pk5);font-size:11px;margin-bottom:8px;display:none"></div>
   <div style="margin-bottom:10px">
     <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px;text-align:left">Chọn avatar:</div>
@@ -272,7 +257,6 @@
   <button class="btn btn-p" style="width:100%;padding:10px;font-size:13px;margin-bottom:7px" onclick="doRegister()">Đăng ký ngay</button>
   <button class="btn btn-o" onclick="closeMod('register')">Đóng</button>
 </div></div>
-
 <div class="mbg" id="mod-newgame"><div class="modal">
   <span class="mem">♟️</span><h2>Tạo ván cờ mới</h2>
   <!-- Mode select: Normal vs Rank -->
@@ -305,9 +289,34 @@
       <div class="cpick" id="cp-black" onclick="selColor(this)"><div class="ci">♚</div>Đen</div>
       <div class="cpick" id="cp-rand" onclick="selColor(this)"><div class="ci">🎲</div>Ngẫu nhiên</div>
     </div>
+    <div class="ai-selection-wrapper" style="background: var(--white); border: 2px solid var(--pk2); padding: 12px; border-radius: var(--r2); margin: 15px 0;">
+    <h4 style="color: var(--pk5); text-align: center; margin-bottom: 10px; font-family: 'Quicksand', sans-serif; font-size: 14px;">🌸 CHỌN ĐỐI THỦ AI 🌸</h4>
+        <div class="bot-cards-container" style="display: flex; gap: 10px; justify-content: center;">
+   
+  
+      <div class="bot-card active" id="card-easy" onclick="selectBot('easy')" style="border: 2px solid var(--pk5); padding: 8px; border-radius: var(--r); text-align: center; cursor: pointer; background: var(--pk1); width: 100px; transition: all 0.2s;">
+                <img src="giphy (6).gif" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--pk2);">
+                <div style="font-weight: 700; margin-top: 4px; font-size: 12px; color: var(--text);">Melody AI 🎵</div>
+                <span style="font-size: 10px; color: #2e7d32; background: #e8f5e9; padding: 1px 6px; border-radius: 8px; font-weight: bold;">Dễ</span>
+            </div>
+
+        <div class="bot-card" id="card-medium" onclick="selectBot('medium')" style="border: 2px solid transparent; padding: 8px; border-radius: var(--r); text-align: center; cursor: pointer; background: #fdfdfd; width: 100px; transition: all 0.2s;">
+                <img src="giphy (2).gif" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
+                <div style="font-weight: 700; margin-top: 4px; font-size: 12px; color: var(--text);">Sakura AI 🌸</div>
+                <span style="font-size: 10px; color: #ef6c00; background: #fff3e0; padding: 1px 6px; border-radius: 8px; font-weight: bold;">Vừa</span>
+            </div>
+
+        <div class="bot-card" id="card-hard" onclick="selectBot('hard')" style="border: 2px solid transparent; padding: 8px; border-radius: var(--r); text-align: center; cursor: pointer; background: #fdfdfd; width: 100px; transition: all 0.2s;">
+                <img src="giphy (3).gif" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
+                <div style="font-weight: 700; margin-top: 4px; font-size: 12px; color: var(--text);">Kuro AI 🐈‍⬛</div>
+                <span style="font-size: 10px; color: #c62828; background: #ffebee; padding: 1px 6px; border-radius: 8px; font-weight: bold;">Khó</span>
+            </div>
+        </div>
+
+    </div>
   </div>
   <div id="p2-masc-wrap" style="display:none;margin-bottom:10px">
-    <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px">Linh vật Player 2:</div>
+    <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:7px">Avatar Player 2:</div>
     <div class="modal-masc-row" id="p2-masc-row"></div>
   </div>
   <div class="twop-note" id="twop-note"> </div>
